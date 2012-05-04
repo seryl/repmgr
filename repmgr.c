@@ -1591,8 +1591,10 @@ create_recovery_file(const char *data_dir, char *master_conninfo)
 		return false;
 	}
 
-	maxlen_snprintf(line, "primary_conninfo = 'host=%s port=%s'\n", runtime_options.host,
-	                (runtime_options.masterport[0]) ? runtime_options.masterport : "5432");
+	maxlen_snprintf(line, "primary_conninfo = 'host=%s port=%s user=%s, dbname=%s'\n",
+					runtime_options.host,
+	                (runtime_options.masterport[0]) ? runtime_options.masterport : "5432",
+					runtime_options.username, runtime_options.dbname);
 
 	/*
 	 * Template a password into the connection string in recovery.conf
@@ -1611,10 +1613,10 @@ create_recovery_file(const char *data_dir, char *master_conninfo)
 		if (password != NULL)
 		{
 			maxlen_snprintf(line,
-			                "primary_conninfo = 'host=%s port=%s password=%s'\n",
+			                "primary_conninfo = 'host=%s port=%s user=%s, dbname=%s, password=%s'\n",
 			                runtime_options.host,
-			                (runtime_options.masterport[0]) ? runtime_options.masterport : "5432",
-			                password);
+							(runtime_options.masterport[0]) ? runtime_options.masterport : "5432",
+							runtime_options.username, runtime_options.dbname, password);
 		}
 		else
 		{
